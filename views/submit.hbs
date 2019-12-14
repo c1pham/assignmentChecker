@@ -1,0 +1,37 @@
+<link rel='stylesheet' href='/stylesheets/submission.css'/>
+
+
+<div class="w3-bar w3-black navbarAdmin">
+  <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  
+  <div class="w3-dropdown-hover">
+    <button class="w3-button">Help</button>
+    <div class="w3-dropdown-content w3-bar-block w3-card-4">
+      <a href="/helpAdminGrade" class="w3-bar-item w3-button w3-grey">Grade Assignment</a>
+      <a href="/helpAdminAdd" class="w3-bar-item w3-button w3-grey">Create User</a>
+      <a href="/helpAdminRemove" class="w3-bar-item w3-button w3-grey">Remove User</a>
+    </div>
+  </div>
+  <a href="/notAdmin" class="w3-bar-item w3-button">Back</a>
+</div>
+
+<main>
+    {{#if success}}
+        <h3 id="error">Submission is succcessful!</h3>
+    {{else}} 
+        </div><br>
+        <form method="post" action="/addSubmission">
+            <div>
+                <h2> Assignment Submission</strong> </h2>
+                <p>Description: {{ rows.description}} </p>
+                
+            </div> 
+            <input class="hiddenFO" name="id" type="text" value="{{id}}">
+            <input class="hiddenFO" name="description" type="text" value="{{rows.description}}">
+            <input class="hiddenFO" name="username" type="text" value="{{rows.username}}">
+            <textarea class="submitBox" width="50vw" name="submission"  col="500" rows="30"></textarea><br>
+            <br><input class="specialButton" type="submit" value="Assignment Submit"></div>
+        </form>
+    {{/if}}
+</main>
+

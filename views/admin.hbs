@@ -1,0 +1,144 @@
+
+
+<link rel='stylesheet' href='/stylesheets/table.css'/>
+<!-- CDN for bootstraps-->
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<section class="head-text">
+  <div class="container text-center">
+    <p><h2>Main Administrative Page</h2></p>
+  </div>
+</section>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+  <a class="navbar-brand logo" href="#"> Assignment <i class="fas fa-tasks logo"></i></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+      
+      <li class="nav-item active">
+        <a class="nav-link" href="/admin">Main <span class="sr-only">(current)</span></a>
+      </li>
+
+       <li class="nav-item">
+        <a class="nav-link" href="/assignments">Assignment</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Help
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/helpAdminGrade">Grade Assignment</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/helpAdminAdd">Create User</a>
+          <a class="dropdown-item" href="/helpAdminRemove">Remove User</a>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+    </ul>
+    
+  </div>
+  </div>
+</nav>
+
+
+<main class="container"> 
+    <div class="row">
+        <div class="col-lg-5">
+          {{#if user}}
+              <h4>Welcome, Administrator <strong>{{user.username}}</strong> !</h4>
+          {{/if}}
+          <a href="/addAssignment">Add an assignment</a><br>
+          <a href="/assignments">View and grade assignment</a><br>
+          <a href="/signup">Add a user (student or admin)</a><br><br>
+          
+          <div style="background-color: white; padding: 5px;  border-radius: 10px">
+            <p>
+            <h3>Progress Reports</h3>
+            <h5>Assignments Finished: {{finished}}%</h5>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{finished}}%" aria-valuenow="{{finished}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div> 
+            <br>
+            <h5>Submissions Graded: {{graded}}%</h5>
+            <div class="progress">
+             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{graded}}%" aria-valuenow="{{graded}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div> 
+            </p>
+          </div>
+          
+        </div>
+
+        <div class="col-lg-1"></div>
+
+        <div style="background-color: white;  border-radius: 10px" class="col-lg-6">
+
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand logo" href="#"> Existing Users</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">Create User <span class="sr-only">(current)</span></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/removeuser">Remove user</a>
+                    </li> 
+
+                    </ul>   
+                    </div>
+                </div>
+            </nav> <br>
+           
+            {{#if rows}}
+                <table display="none" id="myTable">
+                    <thead>
+                    <th>Username</th><th>Type</th></tr>
+                    </thead>
+                    <tbody>
+                        {{#each rows}}
+                            <tr>
+                                <td> {{ username }}</td>
+                                <td> {{ isadmin }}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            {{/if}}   
+        </div>
+    <div>
+
+    <div class="row">
+        {{#if error}}
+        <p>{{error}}</p>
+        {{/if}}
+    </div>
+</main>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#myTable').DataTable();
+    });
+</script>

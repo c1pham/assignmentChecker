@@ -1,0 +1,114 @@
+body {
+  /*padding: 50px;*/
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.head-text {
+  padding: 20px, 0 !important;
+}
+
+main {
+  padding:50px;
+}
+
+.phoneLogin {
+  max-width: 80vw;
+}
+
+.desktopLogin, .tabletLogin {
+  max-width: 60vw;
+}
+
+.br {background-color: lightgreen;}
+
+a {color: #00B7FF;}
+
+i {color: black;}
+
+.logo {
+  color:white;
+}
+
+.hiddenButton{
+  background-color:inherit;
+  border:none;
+}
+
+#error {color: red;}
+
+.hiddenText {display: white;}
+
+.formatText {white-space: pre-wrap;}
+
+.hiddenFO {
+  height: 0px;
+  max-width: 0vw;
+  padding: 0px;
+  margin: 0%;
+  border: 0px;
+  right: -5000;
+  display: none;
+}
+
+.submitBox {min-width: 50vw;}
+
+.center {text-align: center}
+
+.navbarLocal {
+  overflow: hidden;
+  background-color: #333;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  min-width: 100vw;
+}
+
+.btn3 {
+  text-decoration: none;
+  background-color: black;
+  color: white;
+  border-radius: 25px;
+  border-color:inherit;
+}
+
+.navbarLocal a, .navbarAdmin a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none !important;
+}
+
+.navbarLocal a:hover, .navbarAdmin a:hover  {
+  background-color: red;
+}
+
+.navbarAdmin {
+  overflow: hidden;
+  background-color: #333;
+  left: 0vw !important;
+  min-width: 100%;
+}
+
+.navObject {
+  color:white;
+  text-decoration-color: white;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+<link rel='stylesheet' href='/stylesheets/submission.css'/>
+
+<div class="w3-bar w3-black navbarAdmin">
+  <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  <a href="/assignments" class="w3-bar-item w3-button">Assignments</a>
+  <div class="w3-dropdown-hover">
+    <button class="w3-button">Help</button>
+    <div class="w3-dropdown-content w3-bar-block w3-card-4">
+      <a href="/helpAdminGrade" class="w3-bar-item w3-button w3-grey">Grade Assignment</a>
+      <a href="/helpAdminAdd" class="w3-bar-item w3-button w3-grey">Create User</a>
+      <a href="/helpAdminRemove" class="w3-bar-item w3-button w3-grey">Remove User</a>
+    </div>
+  </div>
+  <a href="/admin" class="w3-bar-item w3-button">Back</a>
+</div>
+
+<main class="text-center">
+    {{#if rows}}
+        {{#each rows}}
+
+            <form method="post" action="/viewAndGradeAssignment">
+                <div class="form-control">
+                    <h1 class="h3 mb-3 font-weight-normal">Grade Assignment</h1>
+
+                    <h2>Submission</h2>
+                    <p><strong>Username</strong>: {{username}}</p>
+                    <p><strong>Description</strong>: {{description}}</p>
+                    <p class="formatText"><strong>Submission</strong>: <br>{{submission}}</p>
+                </div>
+                <input class="hiddenFO" type="text" name="id" value="{{id}}">
+
+                <div class="form-control">
+                    <strong>Numerical Grade</strong> <br>
+                    <input class="formInput" type="text" name="grade"  placeholder="eg. 75"><br>
+                    <strong>Comments</strong><br>
+                    <textarea rows="10" cols="40" name="comments"  placeholder="eg. Good job"></textarea><br>
+                    <input class="specialButton" type="submit" value="Submit Grade">
+                </div>
+            </form>
+        {{/each}}
+    {{/if}}
+</main>

@@ -1,0 +1,76 @@
+<h1>Chat</h1>
+<p>Welcome to the chatroom</p>
+<form id="theForm">
+    <input type="text" id="blah" placeholder="Say something" style="display: none">
+    <input type="submit" value="Start Chat">
+</form>
+<ul id="list"></ul>
+
+<script>
+const un = '{{name.username}}';
+console.log()
+// randomly select background color (try to avoid darker color because font color is black)
+const pick = function() { return Math.random()*128+128; }
+var color = "rgb(" + pick() + "," + pick() + ","+ pick() + ")";
+
+var log = function (event) {
+    // stuff is each message typed by each user
+    var stuff = JSON.parse(event);
+    // used bullet <li> for each message
+    var i = document.createElement('li');
+    // concatenate user name with each message
+    i.innerText = stuff.user+': '+stuff.message;
+    // <li> tag will have background color
+    i.style.backgroundColor = stuff.color;
+    // each <li> tag will be added continuously
+    list.appendChild(i);
+}
+// This URL is only for front-end websocket API
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+
+// we will need to use same Server-side and Client-side port number
+// Note that I am using backticks (`), not single quote(')
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+
+// This will look like ws://localhost:3001/chat OR
+// ws://randomSubUrl.herokuapp.com/chat
+var HOST;
+if (location.hostname === "localhost") {
+    HOST = `ws://${location.hostname}:{{ port }}/chat`;
+} else {
+    HOST = `wss://${location.hostname}/chat`;
+}
+var sock = new WebSocket(HOST);
+// Register events: open, message
+// Fired when a connection with a WebSocket is opened.
+sock.addEventListener('open', function () { });
+// Fired when data is received through a WebSocket.
+sock.addEventListener('message', function (event) { log(event.data); });
+
+theForm.addEventListener("submit", function sendMsg(event) {
+    // reference: https://www.w3schools.com/jsref/event_preventdefault.asp
+    event.preventDefault(); // prevent form default which refreshes the page
+    if(blah.style.display === "none"){
+        blah.style.display = "block";
+        sock.send(JSON.stringify({
+            "user": un,
+            "message": "Joined the chat",
+            "color": color
+        }));
+    }
+    else if (blah.value.trim() === "") {
+        // Do nothing until the user name is set
+    } else {
+        // User types a message
+        sock.send(JSON.stringify({
+            "user": un,
+            "message": blah.value,
+            "color": color
+        }));
+        blah.value='';  // after enqueue, empty message text box
+    }
+    return false;   // prevent form submission
+});
+
+
+</script>

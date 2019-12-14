@@ -1,0 +1,13 @@
+table, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table,th ,td {
+    opacity: 0.95;
+}
+
+thead {
+    background-color: purple;
+    color: white;
+}

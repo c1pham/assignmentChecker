@@ -1,0 +1,72 @@
+<link rel='stylesheet' href='/stylesheets/form.css'/>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+  <a class="navbar-brand logo" href="#"> Assignment <i class="fas fa-tasks logo"></i></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+      
+      <li class="nav-item">
+        <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
+      </li>
+
+       <li class="nav-item">
+        <a class="nav-link" href="/assignments">Assignment</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Help
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/helpAdminGrade">Grade Assignment</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/helpAdminAdd">Create User</a>
+          <a class="dropdown-item" href="/helpAdminRemove">Remove User</a>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+    </ul>
+    
+  </div>
+  </div>
+</nav>
+
+
+<main class="text-center">
+    <form class="form-signin" method="post" action="/removeUser">
+        <h1 class="h3 mb-3 font-weight-normal"> Remove User</h1>
+      
+        <div style="text-align: left;" > &nbsp;User name</div>
+        <input type="text" name="username" placeholder="User name"><br>
+
+        <div>
+            <input type="radio" name="usertype" value="student" checked>student
+            &nbsp; &nbsp; &nbsp;
+            <input type="radio" name="usertype" value="admin">admin <br><br>
+        </div>
+
+        <input class="specialButton" type="submit" value="Submit the user information">
+
+        {{#if nonexist}}
+            <h3 style="color:red;">Username does not exist</h3>
+        {{/if}}
+
+        {{#if success}}
+            <h3 style="color:red;">User removed successfully</h3>
+        {{/if}}
+    </form>
+</main>

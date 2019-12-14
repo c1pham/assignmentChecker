@@ -1,0 +1,150 @@
+<link rel='stylesheet' href='/stylesheets/table.css'/>
+
+
+<section class="head-text">
+  <div class="container text-center">
+    <p><h2>Submitted Assignments</h2></p>
+  </div>
+</section>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+  <a class="navbar-brand logo" href="#"> Assignment <i class="fas fa-tasks logo"></i></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+      
+      <li class="nav-item">
+        <a class="nav-link" href="/admin">Main <span class="sr-only">(current)</span></a>
+      </li>
+
+       <li class="nav-item active">
+        <a class="nav-link" href="/assignments">Assignment</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Help
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/helpAdminGrade">Grade Assignment</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/helpAdminAdd">Create User</a>
+          <a class="dropdown-item" href="/helpAdminRemove">Remove User</a>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+    </ul>
+    
+  </div>
+  </div>
+</nav>
+
+
+<main>
+  <p>
+    <h4>Assignments Finished: {{finished}}%</h4>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{finished}}%" aria-valuenow="{{finished}}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div> 
+    <br>
+    <h4>Submissions Graded: {{graded}}%</h4>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{graded}}%" aria-valuenow="{{graded}}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div> 
+  </p>
+
+
+  {{#if rows}}
+    <table id="myTable">
+      <thead>
+      <tr><th>Username</th><th>Description</th>
+      <th>Due</th><th>Grade</th><th>Submitted</th></tr>
+    </thead>
+    <tbody>
+    {{#each rows}}
+      <tr>
+        {{#if submitted}}
+            <form method="post" action="/viewAndGradeSubmission">
+        {{/if}}
+      
+          <td> {{ username }}</td>
+          <td> {{ description }}</td>
+          <td> {{ due }}</td>
+          <td class="center"> {{ grade }}</td>
+
+          <td class="center">
+            {{#if submitted}}
+              <i class="fas fa-check"></i>
+              <input class="btn3" type="submit" value="Evaluate">  
+            {{else}}        
+              <i class="fas fa-times"></i> 
+            {{/if}}
+          </td>
+        {{#if submitted}}
+          <input class="hiddenFO" name="id" type="hidden" value="{{id}}" readonly>
+          </form>
+        {{/if}}
+      </tr>
+    {{/each}}
+    </tbody>
+  </table> <br>
+
+  <!--
+  <form method="post" action="/viewAndGradeAssignment">
+    <h2>Grade An Assignment</h2>
+    <div style = "float:left; width: 250px;">Assignment ID</div><input type="text" name="id" placeholder="eg. 1"><br>
+    <div style = "float:left; width: 250px;">Numerical Grade</div><input type="text" name="grade"  placeholder="eg. 75"><br>
+    <br><div style = "float:left; width: 250px;">&nbsp;</div><input type="submit" value="Submit Grade">
+  </form>-->
+
+  {{#if success}}
+      <h3 id="error">Grade has been updated successfully!</h3>
+  {{else}}
+      {{#if incorrectID}}
+        <h3 id="error">Grade ID was incorrect.</h3>
+      {{/if}}
+  {{/if}}
+
+  {{else}}
+    <h3 style="color:red;">No assignments</h3>
+  {{/if}}
+</main>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $('#myTable').DataTable();
+
+    var rows = $('tr');
+  for (i = 0 ; i < rows.length; i++) {
+    var cell = rows[i];
+    console.log(cell)
+    if (i%2==1) {
+      cell.style.backgroundColor = 'lightgrey';
+    } 
+  }
+});
+
+$(document).click(function(){
+  var rows = $('tr');
+  for (i = 0 ; i < rows.length; i++) {
+    var cell = rows[i];
+    console.log(cell)
+    if (i%2==1) {
+      cell.style.backgroundColor = 'lightgrey';
+    } else if (i%2==0 && i!=0) {
+      cell.style.backgroundColor = 'white';
+    }
+  }
+});
+</script>

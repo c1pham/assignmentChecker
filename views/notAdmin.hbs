@@ -1,0 +1,154 @@
+<link rel='stylesheet' href='/stylesheets/table.css'/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<section class="head-text">
+  <div class="container text-center">
+    <p><h2>Welcome {{user.username}}!</h2></p>
+  </div>
+</section>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+  <a class="navbar-brand logo" href="#"> Assignment <i class="fas fa-tasks logo"></i></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+      
+      
+      <li class="nav-item active">
+        <a class="nav-link" href="/notAdmin">Home <span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/changePassword">Change Password</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/helpStudent">Help</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/chat">Chat</a>
+      </li>
+    </ul>
+    
+  </div>
+  </div>
+</nav>
+<!--
+<div class="navbarLocal">
+  <a href="/logout">Logout</a>
+  <a href="/changePassword">Change Password</a>
+  <a href="/helpStudent">Help</a>
+</div>-->
+
+
+
+<main>
+  <h2> Assignments </h2>
+
+  <p>
+    <h4>Finished Progress Bar: {{done}}%</h4>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{done}}%" aria-valuenow="{{done}}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div> 
+  </p>
+
+
+  {{#if rows}}
+    <table id="myTable">
+      <thead>
+        <th>Description</th>
+        <th>Due</th>
+        <th>Grade</th>
+        <th>Submitted</th>
+        <th>Commented</th>
+    </thead>
+    <tbody>
+    {{#each rows}}
+        <tr>
+          <form  method="post" action="/submit">
+            <td> {{ description }}</td>
+            <td> {{ due }}</td>
+            <td class="center"> {{ grade }}</td>
+            <td class="hiddenText center">
+              {{#if submitted}}
+                <button class="hiddenButton" type="submit"><i class="fas fa-check"></i></button>
+              {{else}} 
+                <button class="hiddenButton" type="submit"><i class="fas fa-times"></i></button> 
+              {{/if}}
+            </td>
+            <input class="hiddenFO" name="id" type="hidden" value="{{id}}" readonly>
+          </form>
+
+            <td class="center">
+              {{#if commented}} 
+                  <p class="hiddenFO" id="{{id}}text">Comment: {{comments}}</p>
+                  <button class="hiddenButton" id="{{id}}"><i class="fas fa-comment"></i></button>
+                  <script>
+                    function comment() {
+                      var comments = document.getElementById({{id}} +"text").innerHTML;
+                      alert(comments);
+                    }
+                    document.getElementById({{id}}).addEventListener('click', comment);
+                  </script>
+              {{/if}}
+            </td>
+      
+        </tr>
+    {{/each}}
+    </tbody>
+  </table> 
+
+  {{else}}
+    <h3 style="color:red;">No assignments</h3>
+  {{/if}}
+</main>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  $('#myTable').DataTable();
+
+  var rows = $('tr');
+  for (i = 0 ; i < rows.length; i++) {
+    var cell = rows[i];
+    console.log(cell)
+    if (i%2==1) {
+      cell.style.backgroundColor = 'lightgrey';
+    }
+  }
+});
+
+$(document).click(function(){
+  var rows = $('tr');
+  for (i = 0 ; i < rows.length; i++) {
+    var cell = rows[i];
+    console.log(cell)
+    if (i%2==1) {
+      cell.style.backgroundColor = 'lightgrey';
+    } else if (i%2==0 && i!=0) {
+      cell.style.backgroundColor = 'white';
+    }
+  }
+
+});
+
+
+</script>
+
+
