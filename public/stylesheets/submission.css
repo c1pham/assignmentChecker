@@ -51,3 +51,7 @@ main {
     cursor: pointer;
     width: 100%;
   }
+
+  .leftText {
+    text-align: left;
+  }

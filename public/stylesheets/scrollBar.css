@@ -1,0 +1,18 @@
+.scrollBox {
+    border-width:10px; 
+    border-radius:5px; 
+    max-height: 60vh; 
+    min-height: 60vh;
+    overflow:scroll;
+    background-color: #eee;
+    border: 4px solid black;
+}
+
+.w3-tangerine {
+    font-family: "Tangerine", serif;
+}
+
+
+ul {
+    list-style-type: none;
+}
