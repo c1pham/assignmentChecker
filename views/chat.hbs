@@ -1,14 +1,73 @@
-<h1>Chat</h1>
-<p>Welcome to the chatroom</p>
+
+<link rel='stylesheet' href='/stylesheets/scrollBar.css'/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+  <a class="navbar-brand logo" href="#"> Assignment <i class="fas fa-tasks logo"></i></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto w-100 justify-content-end">
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+
+    {{#if admin}}
+        <li class="nav-item">
+            <a class="nav-link" href="/admin">Main Page</a>
+        </li>
+    {{/if}}
+    {{#if student}}
+        <li class="nav-item">
+            <a class="nav-link" href="/notAdmin">Main Page</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/hourSchedule">Chat Schedule</a>
+        </li>
+    {{/if}}
+    </ul>
+  </div>
+  </div>
+</nav>
+<main class="container">
+
+<h1 style=>Chatter Box</h1>
+
+<ul class="scrollBox" id="list">
+   <li style="background-color: pink">Automated Message: Welcome to the chatroom</li>
+</ul>
+
+
 <form id="theForm">
-    <input type="text" id="blah" placeholder="Say something" style="display: none">
-    <input type="submit" value="Start Chat">
-</form>
-<ul id="list"></ul>
+    <input type="text" id="blah" placeholder="Say something" style="display: none; min-Width: 100%; min-Height: 5vh;"><br>
+
+    <input id="submit" class="btn btn-primary btn-lg btn-block" type="submit" value="Start Chat">
+</form><br>
+</main>
 
 <script>
-const un = '{{name.username}}';
-console.log()
+
+
+
+window.onbeforeunload = function () {
+    sock.send(JSON.stringify({
+            "user": un,
+            "message": "leave the chat",
+            "color": color
+    }));
+    return "user close the window";
+};
+
+const un = '{{text}}{{name}}';
+console.log();
 // randomly select background color (try to avoid darker color because font color is black)
 const pick = function() { return Math.random()*128+128; }
 var color = "rgb(" + pick() + "," + pick() + ","+ pick() + ")";
@@ -24,6 +83,11 @@ var log = function (event) {
     i.style.backgroundColor = stuff.color;
     // each <li> tag will be added continuously
     list.appendChild(i);
+
+    var messageBody = document.querySelector('#list');
+    console.log(messageBody.scrollHeight);
+    console.log(messageBody.clientHeight);
+    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 }
 // This URL is only for front-end websocket API
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
@@ -45,7 +109,22 @@ var sock = new WebSocket(HOST);
 // Fired when a connection with a WebSocket is opened.
 sock.addEventListener('open', function () { });
 // Fired when data is received through a WebSocket.
-sock.addEventListener('message', function (event) { log(event.data); });
+sock.addEventListener('message', function (event) {
+    log(event.data);
+  
+
+    var stuff = JSON.parse(event.data);
+
+    if ( un !== stuff.user) {
+        var audio = new Audio('sounds/clearly.wav');
+        audio.play();
+    } else {
+        var audio = new Audio('sounds/deduction.mp3');
+        audio.play();
+    }
+});
+
+
 
 theForm.addEventListener("submit", function sendMsg(event) {
     // reference: https://www.w3schools.com/jsref/event_preventdefault.asp
@@ -57,6 +136,9 @@ theForm.addEventListener("submit", function sendMsg(event) {
             "message": "Joined the chat",
             "color": color
         }));
+
+        $("#submit").attr("value", "Send");
+
     }
     else if (blah.value.trim() === "") {
         // Do nothing until the user name is set
@@ -69,6 +151,8 @@ theForm.addEventListener("submit", function sendMsg(event) {
         }));
         blah.value='';  // after enqueue, empty message text box
     }
+    
+    
     return false;   // prevent form submission
 });
 
