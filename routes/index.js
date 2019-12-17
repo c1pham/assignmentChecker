@@ -32,6 +32,19 @@ router.get('/helpAdminRemove', loggedIn, function(req, res, next) {
   res.render('removeUserHelp');
 });
 
+router.get('/back',
+  // depends on the fiels "isAdmin", redirect to the different path: admin or notAdmin
+  passport.authenticate('local', { failureRedirect: '/', failureFlash:true }),
+  function(req, res,next) {
+
+    if (req.user.isadmin == 'admin'){
+      res.redirect('/admin');
+    }
+    else {
+      res.redirect('/notAdmin');
+    }
+});
+
 
 router.post('/',
   // depends on the fiels "isAdmin", redirect to the different path: admin or notAdmin
@@ -45,12 +58,15 @@ router.post('/',
       res.redirect('/notAdmin');
     }
 });
-router.get('/chat', function(req, res) {
+
+router.get('/chat', loggedIn,function(req, res,next) {
   // Pass Server-side PORT number to Client-side
-  res.render('chat', { name: req.user, port: process.env.PORT || 3000 });
-});
-router.post('/chat', function(req, res, next){
-  res.render('chat',{name: req.user});
+  if(req.user.isadmin == 'admin'){
+    res.render('chat', {name: req.user.username, admin:'true', text: '[Admin]' ,port: process.env.PORT || 3000 });
+  }else{
+    res.render('chat', {name: req.user.username, student:'true',text: '', port: process.env.PORT || 3000 });
+  }
+  
 });
 
 
@@ -189,26 +205,51 @@ router.get('/notAdmin',loggedIn,function(req, res, next){
     }
     else if (result.rows.length > 0) {
       // new stuff start
+      console.log("Num entries: " + result.rows.length);
       client.query('SELECT * FROM assignment WHERE username = $1 and submitted = $2',[req.user.username, true], function(err,result2){
         if (err) {
           console.log("index.js: sql error ");
           next(err); // throw error to error.hbs.
         }
         else if (result2.rows.length > 0) {
+          console.log("Num submitted: " + result2.rows.length);
+          // new stuff
           
-          console.log(result2.rows.length);
-          var done = (result2.rows.length/result.rows.length * 100).toFixed(2);
-          res.render('notAdmin', {rows: result.rows, user: req.user, done:done} );
+          client.query('SELECT * FROM assignment WHERE username = $1 and grade != $2', [req.user.username,'-'], function(err,result3){
+            console.log("Num graded: " + result3.rows.length);
+            if (err) {
+              console.log("index.js: sql error ");
+              next(err); // throw error to error.hbs.
+            } else if (result3.rows.length > 0) {
+              var numGrade = result3.rows.length;
+              var total = 0;
+              console.log("before" + total);
+
+              for ( i = 0 ; i < numGrade; i++) {
+                total = total + +result3.rows[i].grade;
+              }
+              var average = (total/(numGrade * 100)*100).toFixed(2);
+
+              var gradeFraction = total + "/" + (numGrade*100);
+
+              var numSubmitted = result2.rows.length;
+
+              var teacherFinished = ((numGrade/numSubmitted)*100).toFixed(2);
+
+              var teacherFinishedFraction = numGrade + "/" + numSubmitted;
+
+              var done = (result2.rows.length/result.rows.length * 100).toFixed(2);
+              res.render('notAdmin', {rows: result.rows, user: req.user, done: done,
+                 grade: average, fraction:gradeFraction, graded: teacherFinished, gradedFraction: teacherFinishedFraction} );
+            }
+          }); 
+       
         }
         else{
-          console.log("This student does not have any assignment");
-          
           res.render('notAdmin', {rows: result.rows, user: req.user, done: 100} );
         }
       });
-      // new stuff end
-      //console.log("Here I am");
-      //res.render('notAdmin', {rows: result.rows, user: req.user} );
+
     }
     else{
       console.log("This student does not have any assignment");
@@ -295,7 +336,64 @@ router.get('/admin',loggedIn,function(req, res, next){
     }
   });*/
 });
-
+router.get('/hourSchedule',loggedIn,function(req,res,next){
+  client.query('SELECT * FROM chat', function(err,result){
+    if(err){
+      next(err);
+    }
+    else{
+      res.render('hourSchedule',{rows: result.rows,error: req.flash('error')});
+    }
+  })
+  
+});
+router.get('/officeHour',loggedIn,function(req,res,next){
+  client.query('SELECT * FROM chat', function(err,result){
+    if(err){
+      next(err);
+    }
+    else{
+      res.render('officeHour',{rows: result.rows,user:req.user, error: req.flash('error')});
+    }
+  })
+  
+});
+router.post('/officeHour',loggedIn,function(req,res,next){
+  if(req.body.startT != '' && req.body.endT != ''){
+    client.query('SELECT * FROM chat WHERE admin = $1', [req.user.username], function(err, result) {
+      if (err) {
+        console.log("unable to query SELECT");
+        next(err);
+      }
+      if (result.rows.length == 0 ) {
+          console.log("user not exist");
+          client.query('INSERT INTO chat (admin, starttime, endtime) VALUES($1, $2, $3)', [req.user.username, req.body.startT,req.body.endT], function(err, resu) {
+            if (err) {
+              console.log("unable to query INSERT");
+              next(err);
+            }
+            console.log("update chat");
+            
+          });
+      } else {
+        console.log("update chat");
+        client.query('UPDATE chat SET starttime=\'' + req.body.startT + '\' ,endtime=\''+ req.body.endT+'\' WHERE admin=\'' + req.user.username + '\'');
+      }
+      res.redirect('officeHour');
+    });
+  } 
+  
+  else{
+    client.query('SELECT * FROM chat', function(err,result){
+      if(err){
+        next(err);
+      }
+      else{
+        res.render('officeHour',{rows: result.rows,user:req.user, empty: "true", error: req.flash('error')});
+      }
+    })
+  }
+});
 router.get('/addAssignment',function(req, res, next) {
   res.render('addAssignment', {user: req.user, error: req.flash('error')});
 });
@@ -307,7 +405,7 @@ router.post('/addAssignment',function(req, res, next) {
       next(err);
     }
     if (result.rows.length > 0) {
-        console.log("user exist");
+        console.log("user exist" + result.rows.length);
         client.query('INSERT INTO assignment (username, description, due, grade, submitted, submission, commented, comments) VALUES($1, $2, $3, $4, $5, $6, $7, $8)', [req.body.username, req.body.description,req.body.due, '-', false, 'None', false, 'None'], function(err, result) {
           if (err) {
             console.log("unable to query INSERT");
@@ -317,6 +415,7 @@ router.post('/addAssignment',function(req, res, next) {
           res.render('addAssignment', {user: req.user , success: "true" });
         });
     } else {
+      console.log("user exist" + result.rows.length);
       res.render('addAssignment', {user: req.user , failure: "true" });
     }
   });
@@ -334,7 +433,6 @@ function validUsername(username) {
 function createUser(req, res, next){
   var salt = bcrypt.genSaltSync(10);
   var pwd = bcrypt.hashSync(req.body.password, salt);
-  
   client.query('INSERT INTO users (username, password, isAdmin) VALUES($1, $2, $3)', [req.body.username, pwd, req.body.usertype], function(err, result) {
     if (err) {
       console.log("unable to query INSERT");
@@ -347,7 +445,7 @@ function createUser(req, res, next){
 
 function deleteUser(req, res, next){
   
-  client.query('DELETE from users WHERE username=$1 AND isAdmin=$2', [req.body.username, req.body.usertype], function(err, result) {
+  client.query('DELETE from users WHERE username=$1 AND isAdmin=$2', [req.body.username, 'student'], function(err, result) {
     if (err) {
       console.log("unable to query INSERT");
       return next(err); // throw error to error.hbs.
@@ -382,7 +480,7 @@ router.get('/removeUser', loggedIn, function(req, res) {
 router.post('/removeUser', function(req, res, next) {
   console.log(req.body.usertype);
 
-  client.query('SELECT * FROM users WHERE username=$1 AND isAdmin=$2',[req.body.username, req.body.usertype], function(err,result){
+  client.query('SELECT * FROM users WHERE username=$1 AND isAdmin=$2',[req.body.username, 'student'], function(err,result){
     if (err) {
       console.log("sql error ");
       next(err); // throw error to error.hbs.
